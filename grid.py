@@ -7,6 +7,9 @@ def height(g):
 def width(g):
 	return g[1][0] - g[0][0] + 1
 	
+def center(g):
+	return floor_pos(scale_pos(add_pos(g[0], g[1]), 1/2))
+	
 def rel_pos(p, g):
 	return sub_pos(p, g[0])
 	
@@ -18,6 +21,12 @@ def add_pos(p1, p2):
 	
 def mult_pos(p1, p2):
 	return (p1[0] * p2[0], p1[1] * p2[1])
+	
+def scale_pos(p, scalar):
+	return (p[0] * scalar, p[1] * scalar)
+	
+def floor_pos(p):
+	return (p[0]//1, p[1]//1)
 	
 def get_pos():
 	return (get_pos_x(), get_pos_y())

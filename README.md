@@ -17,3 +17,4 @@ Note that it is *similar* to Python but is actually a subset of the language imp
 ![Checkpoint 2](media/checkpoint-2-screenshot.png)
 
 
+git st

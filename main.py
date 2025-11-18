@@ -78,18 +78,47 @@ def make_item(goal, item, g, entity, ground_type, water_level):
 		items += grid_scan(g, item_task, 0)
 
 	return items
+	
+def make_gold(g):
+	before = num_items(Items.Gold)
+	move_to(add_pos(center(g), (1,1)))
+	plant(Entities.Bush)
+	substance = width(g) * 2**(num_unlocked(Unlocks.Mazes) - 1)
+	use_item(Items.Weird_Substance, substance)
+	
+	directions = (North, East, South, West)
+	idir = 0
+	while num_items(Items.Gold) == before:
+		for ddir in (1, 0, 3, 2):
+			dir = directions[(idir + ddir) % 4]
+			if can_move(dir):
+				move(dir)
+				idir = (idir + ddir) % 4
+				break
+			
+		if get_entity_type() == Entities.Treasure:
+			harvest()
 
+	return num_items(Items.Gold) - before
+	
+def random_dir():
+	i = random() * 4 // 1
+	return (North, East, South, West)[i]
+	
 #	
 # Farming task functions
 #
 
 clear()
 
+target_power = 100
 sunflower_grid = [[0, 13], [15, 15]]
 pumpkin_grid = [[0, 0], [5, 5]]
 forest_grid = [[0, 7], [5, 12]]
 cactus_grid = [[7, 0], [15, 8]]
 hay_grid = [[6,9], [15, 12]]
+maze_size = 16
+maze_grid = [[16, 0], [16 + maze_size - 1, maze_size - 1]]
 
 def t1():
 	return (("Cactus", make_item(50, Items.Cactus, cactus_grid, Entities.Cactus, Grounds.Soil, 0)),)
@@ -105,11 +134,16 @@ def t4():
 	return (("Pumpkins", make_pumpkins(1000, pumpkin_grid)),)
 	
 def t5():
-	if num_items(Items.Power) > 50:
+	if num_items(Items.Power) > target_power:
 		return (("Sunflowers", 0),)
 	return (("Sunflowers", make_item(50, Items.Power, sunflower_grid, Entities.Sunflower, Grounds.Soil, 0.25)),)
+	
+def t6():
+	return (("Gold", make_gold(maze_grid)),)
 
-all_tasks = (t5, t4, t3, t2, t1)
+all_tasks = (t6, 
+	t5, t4, t3, t2, t1
+	)
 
 p = 0
 while True:
